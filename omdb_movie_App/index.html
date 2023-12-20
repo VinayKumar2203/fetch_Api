@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border: 1px solid black;
+        padding: 20px;
+        margin: 20px;
+      }
+    </style>
+    <title>OMDB API</title>
+  </head>
+  <body>
+    <h1>OMDB MOVIES</h1>
+    <input type="text" id="searchParam" />
+    <button onclick="getData()">Search</button>
+    <div id="container"></div>
+  </body>
+</html>
+<script>
+ 
+ let container=document.querySelector("#container");
+ let API_KEY="bad97c74";
+
+ function getData() {
+    let searchParam=document.querySelector("#searchParam").value;
+    console.log(searchParam);
+    fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=${searchParam}`)
+  .then(response => response.json())  // Convert the response to a format we can easily work with.
+  .then(data => {
+    // console.log(data);
+    displayData( data.Search);
+  })
+  .catch(error => {
+    console.error("There was an error fetching the data.", error);
+  });
+
+ }
+
+
+ function displayData(moviesList) {
+  container.innerHTML="";
+
+  if (!moviesList||moviesList.length===0) {
+    let div1= document.createElement("div")
+    div1.innerText="no result found";
+    container.appendChild(div1);
+  }
+  else{
+    moviesList.map((movie)=>{
+     let movieCard=document.createElement("div");
+     movieCard.className="card";
+
+     let img=document.createElement("img");
+     img.src = movie.Poster;
+
+
+     let title=document.createElement("p");
+     title.textContent="Title :"+ movie.Title
+
+      // Create Year
+      let yearElement = document.createElement("p")
+      yearElement.textContent = "Year : " + movie.Year
+
+      let idElement = document.createElement("p")
+      idElement.textContent = "IMDB-ID : " + movie.imdbID
+
+      // Create Type
+      let typeElement = document.createElement("p")
+      typeElement.textContent = "Type : " + movie.Type
+
+      movieCard.append(
+        img,
+        title,
+        yearElement,
+        idElement,
+        typeElement
+      )
+      container.append(movieCard);
+    })
+  }
+ }
+
+</script>
